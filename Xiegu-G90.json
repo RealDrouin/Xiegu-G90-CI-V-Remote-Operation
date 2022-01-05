@@ -973,7 +973,7 @@
             [
                 "6add312b630d46cf",
                 "f8abc31fdeb8a1f1",
-                "2189f5c302291287"
+                "99ef0848469a727a"
             ]
         ]
     },
@@ -982,7 +982,7 @@
         "type": "debug",
         "z": "08bf4f59bd2b72bb",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -2133,41 +2133,21 @@
         ]
     },
     {
-        "id": "2189f5c302291287",
-        "type": "function",
-        "z": "08bf4f59bd2b72bb",
-        "name": "Parse CI-V response",
-        "func": "// Sample of parsing raw CI-V packets\n// Mode 15 Get S-METER\n// Real VE2CUZ\n\n\nconst CMD_GET_SMETER = 0x15;\nconst SUB_GET_SMETER = 0x02;\nconst RADIO_ADDR = 0x88;    // change this to your radio address\nconst MASK_HIGHNIB = 0xF0;\nconst MASK_LOWNIB = 0x0F;\n\nvar sender = 0;\nvar destination = 0;\nvar command = 0;\nvar subCommand = 0;\n\nvar S = 0;\nvar dB = 0;\n\n\nif(msg.payload.length < 8)\n    return msg;\n\ndestination = msg.payload[2];\nsender      = msg.payload[3];\ncommand     = msg.payload[4]; //0x15\nsubCommand  = msg.payload[5]; //0x02\n\n// Returned buffer FE FE E0 88 15 20 40 10 FD\n// Returned buffer FE FE E0 88 15 20 73 FD\nif (command == CMD_GET_SMETER && subCommand == SUB_GET_SMETER && sender == RADIO_ADDR)\n{\n    if(msg.payload.length === 8){\n    s  =  ((msg.payload[6] & MASK_HIGHNIB) / 16 ) * 10; // highnibble\n    s  += ((msg.payload[6] & MASK_LOWNIB)      );   \n    }\n    else if(msg.payload.length === 9) {\n        s  =  ((msg.payload[7] & MASK_HIGHNIB) / 16 ) * 1000; // highnibble\n    s  += ((msg.payload[7] & MASK_LOWNIB)  * 100    );     \n    s  += ((msg.payload[6] & MASK_HIGHNIB) / 16 ) * 10; // highnibble\n    s  += ((msg.payload[6] & MASK_LOWNIB)      );    \n    }\n    // radio return value 0-255\n    dB = s / 2;  // return value in dB\n    S = dB /6;   // return value in S units\n    \n    msg.S = S;\n    msg.dB = dB;\n}\n\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1620,
-        "y": 1600,
-        "wires": [
-            [
-                "586811909a70989f",
-                "bdf3d68cc25d2c55"
-            ]
-        ]
-    },
-    {
         "id": "6c1e65836f2d2544",
         "type": "ui_level",
         "z": "08bf4f59bd2b72bb",
         "group": "14a5ecb8405f0776",
-        "order": 27,
+        "order": 28,
         "width": 0,
         "height": 0,
         "name": "S-Meter",
-        "label": "S-",
+        "label": "S ",
         "colorHi": "#e60000",
         "colorWarn": "#ff9900",
         "colorNormal": "#00b33c",
         "colorOff": "#595959",
-        "min": "0",
-        "max": "21",
+        "min": "1",
+        "max": "9",
         "segWarn": "",
         "segHigh": "",
         "unit": "",
@@ -2190,50 +2170,8 @@
         "peakmode": true,
         "property": "S",
         "peaktime": 3000,
-        "x": 2160,
-        "y": 1580,
-        "wires": []
-    },
-    {
-        "id": "7f0b6a88f69e586e",
-        "type": "ui_level",
-        "z": "08bf4f59bd2b72bb",
-        "group": "14a5ecb8405f0776",
-        "order": 28,
-        "width": 0,
-        "height": 0,
-        "name": "dB",
-        "label": "",
-        "colorHi": "#e60000",
-        "colorWarn": "#ff9900",
-        "colorNormal": "#00b33c",
-        "colorOff": "#595959",
-        "min": 0,
-        "max": "127",
-        "segWarn": "",
-        "segHigh": "",
-        "unit": "dB",
-        "layout": "sh",
-        "channelA": "",
-        "channelB": "",
-        "decimals": "1",
-        "animations": "rocket",
-        "shape": "1",
-        "colorschema": "fixed",
-        "textoptions": "default",
-        "colorText": "#eeeeee",
-        "fontLabel": "",
-        "fontValue": "",
-        "fontSmall": "",
-        "colorFromTheme": true,
-        "textAnimations": true,
-        "hideValue": false,
-        "tickmode": "segments",
-        "peakmode": true,
-        "property": "dB",
-        "peaktime": 3000,
-        "x": 2150,
-        "y": 1640,
+        "x": 2380,
+        "y": 1540,
         "wires": []
     },
     {
@@ -2301,27 +2239,8 @@
         "y": 1580,
         "wires": [
             [
-                "6c1e65836f2d2544"
-            ]
-        ]
-    },
-    {
-        "id": "bdf3d68cc25d2c55",
-        "type": "rbe",
-        "z": "08bf4f59bd2b72bb",
-        "name": "Block unless Changed",
-        "func": "rbe",
-        "gap": "",
-        "start": "",
-        "inout": "out",
-        "septopics": true,
-        "property": "dB",
-        "topi": "topic",
-        "x": 1900,
-        "y": 1640,
-        "wires": [
-            [
-                "7f0b6a88f69e586e"
+                "0b0551d6e5957946",
+                "d0c1c0976343b078"
             ]
         ]
     },
@@ -2822,6 +2741,148 @@
         "x": 970,
         "y": 100,
         "wires": []
+    },
+    {
+        "id": "99ef0848469a727a",
+        "type": "function",
+        "z": "08bf4f59bd2b72bb",
+        "name": "Parse CI-V response",
+        "func": "// Sample of parsing raw CI-V packets\n// Mode 15 Get S-METER\n// Real VE2CUZ\n\n\nconst CMD_GET_SMETER = 0x15;\nconst SUB_GET_SMETER = 0x02;\nconst RADIO_ADDR = 0x88;    // change this to your radio address\nconst MASK_HIGHNIB = 0xF0;\nconst MASK_LOWNIB = 0x0F;\n\nvar sender = 0;\nvar destination = 0;\nvar command = 0;\nvar subCommand = 0;\n\nvar S = 0;\nvar dB = 0;\n\n\nif(msg.payload.length < 8)\n    return msg;\n\ndestination = msg.payload[2];\nsender      = msg.payload[3];\ncommand     = msg.payload[4]; //0x15\nsubCommand  = msg.payload[5]; //0x02\n\n// Returned buffer FE FE E0 88 15 20 40 10 FD\n// Returned buffer FE FE E0 88 15 20 73 FD\nif (command == CMD_GET_SMETER && subCommand == SUB_GET_SMETER && sender == RADIO_ADDR)\n{\n    if(msg.payload.length === 8){\n    s  =  ((msg.payload[6] & MASK_HIGHNIB) / 16 ) * 10; // highnibble\n    s  += ((msg.payload[6] & MASK_LOWNIB)      );   \n    }\n    else if(msg.payload.length === 9) {\n        s  =  ((msg.payload[7] & MASK_HIGHNIB) / 16 ) * 1000; // highnibble\n    s  += ((msg.payload[7] & MASK_LOWNIB)  * 100    );     \n    s  += ((msg.payload[6] & MASK_HIGHNIB) / 16 ) * 10; // highnibble\n    s  += ((msg.payload[6] & MASK_LOWNIB)      );    \n    }\n    // radio return value 0-255\n    dB = s / 2;  // return value in dB\n    S = dB / 6;   // return value in S units\n    \n    msg.S = S;\n    msg.dB = dB;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1640,
+        "y": 1580,
+        "wires": [
+            [
+                "586811909a70989f"
+            ]
+        ]
+    },
+    {
+        "id": "91e57ee4a8fd619d",
+        "type": "range",
+        "z": "08bf4f59bd2b72bb",
+        "minin": "1",
+        "maxin": "9",
+        "minout": "121",
+        "maxout": "73",
+        "action": "scale",
+        "round": true,
+        "property": "S",
+        "name": "",
+        "x": 2360,
+        "y": 1480,
+        "wires": [
+            [
+                "9d7eb6a83fa90e60"
+            ]
+        ]
+    },
+    {
+        "id": "a05d6c6139b93375",
+        "type": "ui_text",
+        "z": "08bf4f59bd2b72bb",
+        "group": "14a5ecb8405f0776",
+        "order": 27,
+        "width": 0,
+        "height": 0,
+        "name": "dB",
+        "label": "",
+        "format": "<font size = 10>{{msg.dB}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 2530,
+        "y": 1620,
+        "wires": []
+    },
+    {
+        "id": "0b0551d6e5957946",
+        "type": "function",
+        "z": "08bf4f59bd2b72bb",
+        "name": "Limit value at 9",
+        "func": "S = msg.S;\nif (S > 9){\n    S = 9;\n}\n\nmsg.S = S;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2160,
+        "y": 1540,
+        "wires": [
+            [
+                "6c1e65836f2d2544",
+                "91e57ee4a8fd619d"
+            ]
+        ]
+    },
+    {
+        "id": "3722d1d3112b0796",
+        "type": "comment",
+        "z": "08bf4f59bd2b72bb",
+        "name": "dB chart",
+        "info": "S9 + 40 dB\nS9 + 30 dB\nS9 + 20 dB\nS9 + 10 dB \nS9 \t-73 dBm \nS8 \t-79 dBm \nS7 \t-85 dBm \nS6 \t-91 dBm \nS5 \t-97 dBm \nS4 \t-103 dBm \nS3 \t-109 dBm \nS2 \t-115 dBm \nS1 \t-121 dBm ",
+        "x": 2540,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "9d7eb6a83fa90e60",
+        "type": "debug",
+        "z": "08bf4f59bd2b72bb",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "S",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2530,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "d0c1c0976343b078",
+        "type": "range",
+        "z": "08bf4f59bd2b72bb",
+        "minin": "10",
+        "maxin": "21",
+        "minout": "72",
+        "maxout": "13",
+        "action": "scale",
+        "round": true,
+        "property": "S",
+        "name": "",
+        "x": 2180,
+        "y": 1620,
+        "wires": [
+            [
+                "d443ad21d05e3d21"
+            ]
+        ]
+    },
+    {
+        "id": "d443ad21d05e3d21",
+        "type": "function",
+        "z": "08bf4f59bd2b72bb",
+        "name": "",
+        "func": "S = msg.S;\n\nif (S < 73 && S > 12 ){\n    var dB = (73 - S);\n    dB = \"S9+\" + dB + \"dB\";\n    msg.dB = dB; \n    return msg;\n} \nelse {\n    msg.dB = \"\";\nreturn msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2360,
+        "y": 1620,
+        "wires": [
+            [
+                "a05d6c6139b93375"
+            ]
+        ]
     },
     {
         "id": "4f46147fbb90ce43",
